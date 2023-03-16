@@ -1,8 +1,9 @@
-#include <iostream>
 #include <string>
 #include <stdio.h>
 #include <unistd.h>
-#include "opencv2/opencv.hpp"
+#include <opencv2/videoio.hpp>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/highgui.hpp>
 
 unsigned char GetCameraID(const char *deviceName)
 {
@@ -19,7 +20,7 @@ unsigned char GetCameraID(const char *deviceName)
       {
         fgets(buff, sizeof(buff), fp);
 
-        for (unsigned char i = 0; i < sizeof(buff) && buff[i] != '\0'; ++i)
+        for (unsigned char i = 10; i < sizeof(buff) && buff[i] != '\n'; ++i)
         {
           if (buff[i] >= 48 && buff[i] <= 57)
             camID = (buff[i] - '0');
@@ -35,7 +36,7 @@ unsigned char GetCameraID(const char *deviceName)
 
 int main(int agrc, char *argv[])
 { 
-  unsigned char camID = GetCameraID("XiaoMiUSB\n");
+  unsigned char camID = GetCameraID("V380FHD\n");
   cv::VideoCapture cap(camID);
   cv::Mat frame;
 
@@ -44,7 +45,7 @@ int main(int agrc, char *argv[])
     cap.read(frame);
     cv::imshow("Frame", frame);
 
-    if ((char)cv::waitKey(50) == (char)32)
+    if ((char)cv::waitKey(1) == (char)32)
       break;
   }
   cap.release();
