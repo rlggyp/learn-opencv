@@ -40,13 +40,26 @@ int main(int agrc, char *argv[])
   cv::VideoCapture cap(camID);
   cv::Mat frame;
 
-  while (cap.isOpened())
-  {
-    cap.read(frame);
-    cv::imshow("Frame", frame);
+  bool stopCapture = false;
 
-    if ((char)cv::waitKey(1) == (char)32)
-      break;
+  while (!stopCapture)
+  {
+    if (!cap.isOpened())
+    {
+      if (!cap.open(GetCameraID("V380FHD\n")))
+      {
+        cap.release();
+        continue;
+      }
+    }
+
+    if (cap.read(frame))
+      cv::imshow("Frame", frame);
+    else
+      cap.release();
+
+    if ((char)cv::waitKey(50) == (char)32)
+      stopCapture = true;
   }
   cap.release();
   return 0;
