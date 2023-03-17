@@ -5,6 +5,8 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
 
+#define DEVICE_NAME "LogitechBRIO\n"
+
 unsigned char GetCameraID(const char *deviceName)
 {
   FILE *fp;
@@ -29,24 +31,26 @@ unsigned char GetCameraID(const char *deviceName)
       }
     }
   }
-  pclose(fp);
 
+  pclose(fp);
   return camID;
 }
 
 int main(int agrc, char *argv[])
 { 
-  unsigned char camID = GetCameraID("V380FHD\n");
-  cv::VideoCapture cap(camID);
+  cv::VideoCapture cap(GetCameraID(DEVICE_NAME));
   cv::Mat frame;
 
   bool stopCapture = false;
 
   while (!stopCapture)
   {
+    if ((char)cv::waitKey(50) == (char)32)
+      stopCapture = true;
+
     if (!cap.isOpened())
     {
-      if (!cap.open(GetCameraID("V380FHD\n")))
+      if (!cap.open(GetCameraID(DEVICE_NAME)))
       {
         cap.release();
         continue;
@@ -57,10 +61,8 @@ int main(int agrc, char *argv[])
       cv::imshow("Frame", frame);
     else
       cap.release();
-
-    if ((char)cv::waitKey(50) == (char)32)
-      stopCapture = true;
   }
+
   cap.release();
   return 0;
 }
