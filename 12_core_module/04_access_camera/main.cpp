@@ -73,7 +73,7 @@ unsigned char GetCameraID(std::string *deviceName)
 
         for (unsigned char i = 10; i < sizeof(buff) && buff[i] != '\n'; ++i)
         {
-          if (buff[i] >= 48 && buff[i] <= 57)
+          if (buff[i] >= '0' && buff[i] <= '9')
             camID = (buff[i] - '0');
         }
         break;
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
   while (!stopCapture)
   {
-    key = cv::waitKey(50);
+    key = cv::waitKey(20);
 
     if (key == (char)32)
       stopCapture = true;
