@@ -5,20 +5,69 @@
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
 
-#define DEVICE_NAME "LogitechBRIO\n"
-
-unsigned char GetCameraID(const char *deviceName)
+void RemoveSpace(std::string *deviceName, unsigned char *totalWord)
 {
-  FILE *fp;
-  unsigned char camID = 0;
+  char temp[50];
 
-  if ((fp = popen("v4l2-ctl --list-device | awk '{print $1 $2}'", "r")) != NULL)
+  strcpy(temp, deviceName->c_str());
+  *deviceName = temp[0];
+
+  for (unsigned char i = 1; i < sizeof(temp); ++i)
   {
-    char buff[20];
+    if (temp[i] == 32)
+      ++*totalWord;
+    else
+    {
+      if (temp[i] == '\0')
+        break;
+      else
+        *deviceName += temp[i];
+    }
+  }
+  *deviceName += '\n';
+}
+
+void GetCommand(std::string *command, unsigned char *totalWord)
+{
+  char temp[10];
+  *command = "v4l2-ctl --list-device | awk '{print";
+
+  for (unsigned char i = 1; i <= *totalWord; ++i)
+  {
+    if (i != *totalWord)
+      sprintf(temp, " $%d", i);
+    else
+      sprintf(temp, " $%d}'", i);
+
+    *command += temp;
+  }
+}
+
+unsigned char GetCameraID(std::string *deviceName)
+{
+  static FILE *fp;
+  static std::string command;
+  static unsigned char camID;
+  static bool init = true;
+
+  if (init)
+  {
+    unsigned char totalWord = 1;
+
+    init = false;
+    RemoveSpace(deviceName, &totalWord);
+    GetCommand(&command, &totalWord);
+  }
+
+  camID = 0;
+
+  if ((fp = popen(command.c_str(), "r")) != NULL)
+  {
+    char buff[50];
 
     while (fgets(buff, sizeof(buff), fp))
     {
-      if (strcmp(buff, deviceName) == 0)
+      if (strcmp(buff, deviceName->c_str()) == 0)
       {
         fgets(buff, sizeof(buff), fp);
 
@@ -36,21 +85,39 @@ unsigned char GetCameraID(const char *deviceName)
   return camID;
 }
 
-int main(int agrc, char *argv[])
+int main(int argc, char *argv[])
 { 
-  cv::VideoCapture cap(GetCameraID(DEVICE_NAME));
+  std::string deviceName  = argv[1];
+
+  for (char i = 2; i < argc; ++i)
+    deviceName += " " + std::string(argv[i]);
+  
+  cv::VideoCapture cap(GetCameraID(&deviceName));
   cv::Mat frame;
 
+  char key;
   bool stopCapture = false;
 
   while (!stopCapture)
   {
-    if ((char)cv::waitKey(50) == (char)32)
+    key = cv::waitKey(50);
+
+    if (key == (char)32)
       stopCapture = true;
+
+    if (key == (char)'r')
+    {
+      cap.release();
+      if (!cap.open(GetCameraID(&deviceName)))
+      {
+        cap.release();
+        continue;
+      }
+    }
 
     if (!cap.isOpened())
     {
-      if (!cap.open(GetCameraID(DEVICE_NAME)))
+      if (!cap.open(GetCameraID(&deviceName)))
       {
         cap.release();
         continue;
