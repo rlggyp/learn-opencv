@@ -41,6 +41,8 @@ int main( int argc, char** argv )
     return -1;
   }
 
+  cv::resize(src, src, cv::Size(), 0.25, 0.25);
+
   /// Create windows
   namedWindow( "Erosion Demo", WINDOW_AUTOSIZE );
   namedWindow( "Dilation Demo", WINDOW_AUTOSIZE );
