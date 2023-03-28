@@ -50,7 +50,8 @@ void save_image(std::string &save_path)
 
   cv::Mat element = getStructuringElement(dilation_type, cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),cv::Point( dilation_size, dilation_size));
 
-  cv::dilate(output, output, element);
+  //cv::dilate(output, output, element);
+  morphologyEx(output, output, cv::MORPH_CLOSE, element); //getStructuringElement(cv::MORPH_RECT, cv::Size(2*dil, 80)));
   cv::imwrite(save_path, output);
 
   fprintf(stderr, "Successfully saved in %s", save_path.c_str());
