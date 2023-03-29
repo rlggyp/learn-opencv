@@ -31,8 +31,10 @@ void on_trackbar(int, void*)
   cv::Mat element = getStructuringElement( dilation_type, cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),cv::Point( dilation_size, dilation_size ));
 
   cv::dilate(output, output, element );
-  cv::resize(output, resized, cv::Size(), 0.3, 0.3);
-  imshow("Canny", resized);
+
+  //cv::resize(output, resized, cv::Size(), 0.3, 0.3);
+	
+  imshow("Canny", output);
 }
 
 void save_image(std::string &save_path)
@@ -59,33 +61,41 @@ void save_image(std::string &save_path)
 
 int main(int agrc, char *argv[])
 { 
-  std::string save_path = argv[1];
-  save_path =  save_path + __TIME__ + "_canny.jpg";
-  img = cv::imread(argv[1]);
+  //std::string save_path = argv[1];
+  //save_path =  save_path + __TIME__ + "_canny.jpg";
+  //img = cv::imread(argv[1]);
   char key = 0;
 
-  if (img.empty())
-    return 1;
+  //if (img.empty())
+    //return 1;
 
-  cv::namedWindow("Canny");
+  //cv::namedWindow("Canny");
   //resized = img.clone();
   //cv::Canny(resized, output, threshold1, threshold2);
+	//
   //imshow("Canny", output);
 
   cv::namedWindow("Canny", cv::WINDOW_NORMAL);
-  cv::createTrackbar("CannyThreshold_1", "Canny", &threshold1, threshold1Max, on_trackbar);
-  cv::createTrackbar("CannyThreshold_2", "Canny", &threshold2, threshold2Max, on_trackbar);
-  cv::createTrackbar( "Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", "Canny", &dilation_elem, max_elem, on_trackbar);
-  cv::createTrackbar( "Kernel size:\n 2n +1", "Canny", &dilation_size, max_kernel_size, on_trackbar);
+  //cv::createTrackbar("CannyThreshold_1", "Canny", &threshold1, threshold1Max, on_trackbar);
+  //cv::createTrackbar("CannyThreshold_2", "Canny", &threshold2, threshold2Max, on_trackbar);
+  //cv::createTrackbar( "Element:\n 0: Rect \n 1: Cross \n 2: Ellipse", "Canny", &dilation_elem, max_elem, on_trackbar);
+  //cv::createTrackbar( "Kernel size:\n 2n +1", "Canny", &dilation_size, max_kernel_size, on_trackbar);
+
+	cv::VideoCapture cap;
+	cap.open(2);
 
   while (key != (char)32)
   {
-    key = cv::waitKey(100);
-    if (key == 'w')
-      save_image(save_path);
+		cap.read(img);
+		cv::imshow("img", img);
+    //key = cv::waitKey(100);
+    //if (key == 'w')
+    //  save_image(save_path);
   }
 
   img.release();
   cv::destroyAllWindows();
   return 0;
 }
+
+
