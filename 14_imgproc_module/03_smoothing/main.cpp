@@ -61,21 +61,21 @@ int main( int argc, char ** argv )
     }
 
     //![blur]
-    for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
-    {
+    //for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+    //{
         blur( src, dst, Size( i, i ), Point(-1,-1) );
-        if( display_dst( DELAY_BLUR ) != 0 )
-        {
+        //if( display_dst( DELAY_BLUR ) != 0 )
+        //{
             return 0;
-        }
-    }
+        //}
+    //}
     //![blur]
 
     /// Applying Gaussian blur
-    if( display_caption( "Gaussian Blur" ) != 0 )
-    {
-        return 0;
-    }
+    //if( display_caption( "Gaussian Blur" ) != 0 )
+    //{
+        //return 0;
+    //}
 
     //![gaussianblur]
     for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
@@ -95,26 +95,26 @@ int main( int argc, char ** argv )
     }
 
     //![medianblur]
-    for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
-    {
+    //for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
+    //{
         medianBlur ( src, dst, i );
-        if( display_dst( DELAY_BLUR ) != 0 )
-        {
-            return 0;
-        }
-    }
+        //if( display_dst( DELAY_BLUR ) != 0 )
+        //{
+            //return 0;
+        //}
+    //}
     //![medianblur]
 
     /// Applying Bilateral Filter
-    if( display_caption( "Bilateral Blur" ) != 0 )
-    {
-        return 0;
-    }
+    //if( display_caption( "Bilateral Blur" ) != 0 )
+    //{
+    //    return 0;
+    //}
 
     //![bilateralfilter]
     for ( int i = 1; i < MAX_KERNEL_LENGTH; i = i + 2 )
     {
-        bilateralFilter ( src, dst, i, i*2, i/2 );
+        bilateralFilter ( src, dst, i, i*2.0, i/2.0 );
         if( display_dst( DELAY_BLUR ) != 0 )
         {
             return 0;
